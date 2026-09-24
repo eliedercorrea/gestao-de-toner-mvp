@@ -30,7 +30,7 @@ public class GestaoTonerApp {
      * neste projeto público. Integrações externas dependem de configuração local.
      */
     static final boolean ACADEMIC_DEMO_MODE = true;
-
+static final Path ACADEMIC_DATA_DIR = Paths.get("dados-academico");
     static final List<String> DEMO_PRINTERS = List.of(
             "ADMINISTRATIVO - RICOH IM 430 - DEMO-001 - TONER W10",
             "RECEPÇÃO - RICOH IM 430 - DEMO-002 - TONER W10",
@@ -2017,7 +2017,7 @@ public class GestaoTonerApp {
     static class TonerItem { String id=UUID.randomUUID().toString(), modelo="", cor="", compatibilidade="", local=""; int quantidade=0, minimo=1; }
 
     static class Storage {
-        final Path dataDir = Paths.get("dados-academico"); final Path pedidosFile=dataDir.resolve("pedidos.db"); final Path estoqueFile=dataDir.resolve("estoque.db"); final Path emailConfigFile=dataDir.resolve("email.properties");
+        final Path dataDir = ACADEMIC_DATA_DIR; final Path pedidosFile=dataDir.resolve("pedidos.db"); final Path estoqueFile=dataDir.resolve("estoque.db"); final Path emailConfigFile=dataDir.resolve("email.properties");
         void ensureSampleData(){ try { Files.createDirectories(dataDir); if(!Files.exists(pedidosFile)) savePedidos(samplePedidos()); if(!Files.exists(estoqueFile)) saveEstoque(sampleEstoque()); } catch(Exception e){ throw new RuntimeException(e); } }
         List<Pedido> loadPedidos(){ ensureDir(); if(!Files.exists(pedidosFile)) return new ArrayList<>(); try { List<Pedido> out=new ArrayList<>(); for(String line: Files.readAllLines(pedidosFile,StandardCharsets.UTF_8)){ if(line.isBlank()) continue; String[] f=line.split("\\t",-1); Pedido p=new Pedido(); int i=0; p.id=d(f,i++); p.chamado=d(f,i++); p.departamento=d(f,i++); p.equipamento=d(f,i++); p.ip=d(f,i++); p.numeroSerie=d(f,i++); p.complemento=d(f,i++); p.contador=d(f,i++); p.corToner=d(f,i++); p.solicitante=d(f,i++); p.nota=d(f,i++); p.dataSolicitacao=d(f,i++); p.dataAprovacao=d(f,i++); p.notaFiscal=d(f,i++); p.tipoEnvio=d(f,i++); if (f.length >= 20) { p.codigoRastreio=d(f,i++); p.dataRecebimento=d(f,i++); p.chaveNfe=d(f,i++); p.quemRecebeu=d(f,i++); p.status=d(f,i++); if (i < f.length) p.dataCobrancaRetorno=d(f,i++); } else { p.dataRecebimento=d(f,i++); p.chaveNfe=d(f,i++); p.quemRecebeu=d(f,i++); p.status=d(f,i++); } if ("À Caminho".equals(p.status)) p.status=Pedido.STATUS_CAMINHO; if(p.status.isBlank()) p.status=Pedido.STATUS_AGUARDANDO; out.add(p);} return out; } catch(Exception e){ JOptionPane.showMessageDialog(null,"Erro ao carregar pedidos: "+e.getMessage()); return new ArrayList<>(); } }
         void savePedidos(List<Pedido> pedidos){ ensureDir(); List<String> lines=new ArrayList<>(); for(Pedido p:pedidos){ lines.add(String.join("\t", e(p.id),e(p.chamado),e(p.departamento),e(p.equipamento),e(p.ip),e(p.numeroSerie),e(p.complemento),e(p.contador),e(p.corToner),e(p.solicitante),e(p.nota),e(p.dataSolicitacao),e(p.dataAprovacao),e(p.notaFiscal),e(p.tipoEnvio),e(p.codigoRastreio),e(p.dataRecebimento),e(p.chaveNfe),e(p.quemRecebeu),e(p.status),e(p.dataCobrancaRetorno))); } try{ Files.write(pedidosFile,lines,StandardCharsets.UTF_8); } catch(Exception ex){ throw new RuntimeException(ex); } }
