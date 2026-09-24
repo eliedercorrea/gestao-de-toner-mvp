@@ -17,3 +17,7 @@ Thumbs.db
 # Temporários
 *.tmp
 *.bak
+# Proteção adicional contra dados da versão de produção
+dados/
+config/email.properties
+*.log
