@@ -1,15 +1,16 @@
-name: Build do MVP
+name: Testes e Coverage do MVP
 
 on:
   push:
     branches:
       - main
+      - test/testes-automatizados
   pull_request:
     branches:
       - main
 
 jobs:
-  build:
+  testes:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,9 +22,38 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          cache: maven
 
-      - name: Compilar aplicação
-        run: sh build.sh
+      - name: Executar testes e gerar cobertura
+        run: mvn -B clean verify
 
-      - name: Verificar JAR gerado
-        run: test -f dist/GestaoToner-Academico.jar
+      - name: Exibir resumo da cobertura
+        run: |
+          python3 - <<'PY'
+          import csv
+          from pathlib import Path
+
+          arquivo = Path("target/site/jacoco/jacoco.csv")
+
+          if not arquivo.exists():
+              raise SystemExit("Relatório JaCoCo não encontrado.")
+
+          covered = 0
+          missed = 0
+
+          with arquivo.open(encoding="utf-8") as f:
+              for row in csv.DictReader(f):
+                  covered += int(row["INSTRUCTION_COVERED"])
+                  missed += int(row["INSTRUCTION_MISSED"])
+
+          total = covered + missed
+          coverage = round((covered / total) * 100) if total else 0
+
+          print(f"COBERTURA_TOTAL={coverage}%")
+          PY
+
+      - name: Salvar relatório de cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-cobertura-jacoco
+          path: target/site/jacoco/
