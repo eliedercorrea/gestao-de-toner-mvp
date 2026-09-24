@@ -1,6 +1,6 @@
 # Gestão de Toner — MVP Acadêmico
 
-Aplicação desktop em Java Swing para registrar e acompanhar solicitações de toner. Esta pasta é uma **versão acadêmica e sanitizada** do sistema, preparada para ser publicada em um repositório GitHub público.
+Aplicação desktop em Java Swing para registrar e acompanhar solicitações de toner.
 
 ## Objetivo
 
@@ -30,8 +30,6 @@ Este repositório **não contém dados reais da operação**. Foram removidos ou
 - endereços de e-mail corporativos;
 - URLs reais de Power Automate, credenciais e configurações locais;
 - logs, bancos de dados e binários da versão em produção.
-
-Os arquivos gerados em `dados-academico/` e a configuração `dados-academico/email.properties` são ignorados pelo Git. Ao iniciar a aplicação pela primeira vez, ela cria somente registros fictícios para demonstração. A pasta possui nome diferente da usada pela versão de produção para evitar qualquer colisão acidental com os dados reais.
 
 ## Requisitos
 
